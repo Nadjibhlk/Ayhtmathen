@@ -4,7 +4,11 @@ from pymongo import MongoClient
 import os
 
 # ===== Load Mongo URI =====
-MONGO_URI = os.environ.get("MONGO_URI")
+MONGO_URI = os.environ.get( 
+    "MONGO_URI",
+    "mongodb+srv://nadjibhallak04:4t6WfOMGBLgLkjRv@aythmathen.fsvqcpx.mongodb.net/clothing_wholesale?retryWrites=true&w=majority&appName=Aythmathen"
+)
+ 
 if not MONGO_URI:
     raise RuntimeError("MONGO_URI is not set!")
 
@@ -45,3 +49,4 @@ def search_inventory(reference: str = Query(..., description="Reference code to 
         return item if item else {}
     except Exception as e:
         return {"error": str(e)}
+
