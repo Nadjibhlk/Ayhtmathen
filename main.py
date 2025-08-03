@@ -3,33 +3,33 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 import os
 
-# ===== ROOM TO ADD YOUR MONGODB ATLAS URI =====
-# Option 1: Set as environment variable MONGO_URI
+# ===== MONGODB CONNECTION =====
 MONGO_URI = os.environ.get(
     "MONGO_URI",
     "mongodb+srv://nadjibhallak04:4t6WfOMGBLgLkjRv@aythmathen.fsvqcpx.mongodb.net"
 )
-# Option 2: Paste your URI directly below (uncomment and edit)
-# MONGO_URI = "mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
 DB_NAME = "clothing_wholesale"
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 
+# ===== FASTAPI SETUP =====
 app = FastAPI(
     title="Clothing Wholesale Manager API",
     description="REST API for querying inventory from MongoDB Atlas.",
     version="1.0"
 )
 
-# Allow all origins (for dev/demo, restrict in production)
+# ===== CORS SETUP =====
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this to your web domain in production!
+    allow_origins=["*"],  # In production, set to your Netlify domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ===== ROUTES =====
 
 @app.get("/")
 def root():
@@ -48,9 +48,6 @@ def search_inventory(reference: str = Query(..., description="Reference code to 
     return item
 
 # --------- LOCAL RUN INSTRUCTIONS ---------
-# 1. Install dependencies:
-#    pip install fastapi pymongo uvicorn
-# 2. Run the app:
-#    uvicorn main:app --reload
-# 3. Access the API at http://localhost:8000
-# 4. Your JS frontend can use API_BASE = "http://localhost:8000" for testing.
+# pip install fastapi pymongo uvicorn
+# uvicorn main:app --reload
+# Go to http://localhost:8000
