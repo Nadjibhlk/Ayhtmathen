@@ -3,33 +3,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 import os
 
-# ===== MONGODB CONNECTION =====
-MONGO_URI = os.environ.get(
-    "MONGO_URI",
-    "mongodb+srv://nadjibhallak04:4t6WfOMGBLgLkjRv@aythmathen.fsvqcpx.mongodb.net/clothing_wholesale?retryWrites=true&w=majority"
-)
-DB_NAME = "clothing_wholesale"
+# ===== Load Mongo URI =====
+MONGO_URI = os.environ.get("MONGO_URI")
+if not MONGO_URI:
+    raise RuntimeError("MONGO_URI is not set!")
 
 client = MongoClient(MONGO_URI)
-db = client[DB_NAME]
+db = client["clothing_wholesale"]
 
-# ===== FASTAPI SETUP =====
 app = FastAPI(
     title="Clothing Wholesale Manager API",
     description="REST API for querying inventory from MongoDB Atlas.",
     version="1.0"
 )
 
-# ===== CORS SETUP =====
+# ===== Allow frontend to access =====
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, set to your Netlify domain
+    allow_origins=["*"],  # Use your Netlify domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ===== ROUTES =====
 
 @app.get("/")
 def root():
@@ -37,18 +32,16 @@ def root():
 
 @app.get("/inventory")
 def get_inventory():
-    items = list(db.inventory.find({}, {"_id": 0}))
-    return items
+    try:
+        items = list(db.inventory.find({}, {"_id": 0}))
+        return items
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/search")
 def search_inventory(reference: str = Query(..., description="Reference code to search for")):
-    item = db.inventory.find_one({"reference": reference}, {"_id": 0})
-    if not item:
-        return {}
-    return item
-
-# --------- LOCAL RUN INSTRUCTIONS ---------
-# pip install fastapi pymongo uvicorn
-# uvicorn main:app --reload
-# Go to http://localhost:8000
-
+    try:
+        item = db.inventory.find_one({"reference": reference}, {"_id": 0})
+        return item if item else {}
+    except Exception as e:
+        return {"error": str(e)}
