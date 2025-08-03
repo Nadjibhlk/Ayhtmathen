@@ -1,5 +1,5 @@
-// Set this to your deployed FastAPI backend URL, e.g. "https://your-fastapi.onrender.com"
-const API_BASE = 'https://ayhtmathen-production.up.railway.app/';
+// Set this to your deployed FastAPI backend URL
+const API_BASE = 'https://ayhtmathen-production.up.railway.app';
 
 // DOM elements
 const searchInput = document.getElementById('searchInput');
@@ -26,7 +26,6 @@ async function runSearch() {
         return;
     }
     resultsSection.innerHTML = loaderAnimation();
-    // Try reference search first
     let found = false;
     try {
         const res = await fetch(`${API_BASE}/search?reference=${encodeURIComponent(term)}`);
@@ -39,6 +38,7 @@ async function runSearch() {
         }
     } catch (err) { /* ignore */ }
     if (found) return;
+
     // Fallback: search by description
     try {
         const res = await fetch(`${API_BASE}/inventory`);
@@ -124,5 +124,4 @@ function renderInventoryTable(items) {
     }
     html += '</tbody></table>';
     inventoryTableWrapper.innerHTML = html;
-
 }
