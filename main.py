@@ -6,7 +6,7 @@ import os
 # ===== MONGODB CONNECTION =====
 MONGO_URI = os.environ.get(
     "MONGO_URI",
-    "mongodb+srv://nadjibhallak04:4t6WfOMGBLgLkjRv@aythmathen.fsvqcpx.mongodb.net"
+    "mongodb+srv://nadjibhallak04:4t6WfOMGBLgLkjRv@aythmathen.fsvqcpx.mongodb.net/clothing_wholesale?retryWrites=true&w=majority"
 )
 DB_NAME = "clothing_wholesale"
 
@@ -51,3 +51,4 @@ def search_inventory(reference: str = Query(..., description="Reference code to 
 # pip install fastapi pymongo uvicorn
 # uvicorn main:app --reload
 # Go to http://localhost:8000
+
