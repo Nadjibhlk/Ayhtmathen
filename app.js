@@ -1,5 +1,5 @@
 // Set this to your deployed FastAPI backend URL, e.g. "https://your-fastapi.onrender.com"
-const API_BASE = 'https://YOUR-FASTAPI-API-URL-HERE';
+const API_BASE = 'https://ayhtmathen-production.up.railway.app/';
 
 // DOM elements
 const searchInput = document.getElementById('searchInput');
@@ -124,4 +124,5 @@ function renderInventoryTable(items) {
     }
     html += '</tbody></table>';
     inventoryTableWrapper.innerHTML = html;
+
 }
