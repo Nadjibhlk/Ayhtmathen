@@ -1,17 +1,91 @@
-// Set this to your deployed FastAPI backend URL
 const API_BASE = 'https://ayhtmathen-production.up.railway.app';
 
-// DOM elements
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const resultsSection = document.getElementById('resultsSection');
 const inventoryTableWrapper = document.getElementById('inventoryTableWrapper');
+const suggestionsBox = document.getElementById('suggestions');
 
-// Interactive Search: Enter key triggers search
-searchInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') runSearch();
+let suggestionSelected = -1;
+let currentSuggestions = [];
+
+// Suggestion dropdown logic
+searchInput.addEventListener('input', async function() {
+    const q = searchInput.value.trim();
+    if (!q) {
+        suggestionsBox.innerHTML = '';
+        return;
+    }
+    try {
+        const res = await fetch(`${API_BASE}/suggest?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        currentSuggestions = data;
+        if (!data.length) {
+            suggestionsBox.innerHTML = '';
+            return;
+        }
+        let html = '';
+        data.forEach((item, idx) => {
+            html += `<div class="suggestion-item" data-ref="${item.reference}" data-idx="${idx}">
+                        <span style="font-weight:bold;">${item.reference}</span> — ${item.description}
+                    </div>`;
+        });
+        suggestionsBox.innerHTML = html;
+        suggestionSelected = -1;
+    } catch (err) {
+        suggestionsBox.innerHTML = '';
+    }
 });
+
+// Keyboard navigation in suggestion dropdown
+searchInput.addEventListener('keydown', function(e) {
+    const items = suggestionsBox.querySelectorAll('.suggestion-item');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') {
+        if (suggestionSelected < items.length - 1) suggestionSelected++;
+        updateSuggestionHighlight(items);
+        e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+        if (suggestionSelected > 0) suggestionSelected--;
+        updateSuggestionHighlight(items);
+        e.preventDefault();
+    } else if (e.key === 'Enter') {
+        if (suggestionSelected >= 0 && suggestionSelected < items.length) {
+            selectSuggestion(items[suggestionSelected]);
+            e.preventDefault();
+        } else {
+            runSearch();
+        }
+    }
+});
+function updateSuggestionHighlight(items) {
+    items.forEach((item, idx) => {
+        if (idx === suggestionSelected) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+suggestionsBox.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('suggestion-item')) {
+        selectSuggestion(e.target);
+    }
+});
+function selectSuggestion(item) {
+    searchInput.value = item.dataset.ref;
+    suggestionsBox.innerHTML = '';
+    runSearch();
+}
+searchInput.addEventListener('blur', function() {
+    setTimeout(() => { suggestionsBox.innerHTML = ''; }, 160);
+});
+
+// Search button & Enter key triggers search
 searchBtn.addEventListener('click', runSearch);
+searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' && suggestionSelected === -1) runSearch();
+});
 
 // Initial inventory load
 window.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +95,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Search logic
 async function runSearch() {
     const term = searchInput.value.trim();
+    suggestionsBox.innerHTML = '';
     if (!term) {
         showResultMessage('Please enter a reference or description.');
         return;
@@ -47,14 +122,14 @@ async function runSearch() {
         if (filtered.length === 0) {
             showResultMessage('No item found.');
         } else {
-            showResult(filtered[0]); // show first match
+            showResult(filtered[0]);
         }
     } catch (err) {
         showResultMessage('Network error.');
     }
 }
 
-// Animated loader
+// Loader
 function loaderAnimation() {
     return `<div style="text-align:center;padding:1.2rem;">
         <span style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block;">🔄</span>
@@ -78,8 +153,6 @@ function showResult(item) {
       </div>
     `;
 }
-
-// Show message
 function showResultMessage(msg) {
     resultsSection.innerHTML = `<div style="text-align:center;font-size:1.18rem;color:#ef4444;padding:1.2rem;">${msg}</div>`;
 }
