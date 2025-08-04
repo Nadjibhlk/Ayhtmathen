@@ -2,35 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clothing Manager Dashboard</title>
+    <title>🧥 Clothing Wholesale Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Google Fonts for a modern look -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <h1>🧥 Clothing Wholesale Manager</h1>
-        <div class="subtitle">Instant Stock & Price Lookup</div>
+        <div class="subtitle">Instant Stock, Price &amp; Smart Search</div>
     </header>
     <main>
         <section class="search-section">
-            <input type="text" id="searchInput" placeholder="Enter reference or description..." autocomplete="off">
-            <button id="searchBtn"><span class="search-icon">🔍</span> Search</button>
+            <div class="search-group">
+                <input type="text" id="searchInput" placeholder="Type reference or description..." autocomplete="off">
+                <div id="suggestions" class="suggestions-list"></div>
+                <button id="searchBtn"><span class="search-icon">🔍</span> Search</button>
+            </div>
         </section>
-        <section id="resultsSection">
-            <!-- Results will appear here -->
-        </section>
+        <section id="resultsSection"></section>
         <section id="inventorySection">
             <h2>📦 Current Inventory</h2>
-            <div id="inventoryTableWrapper">
-                <!-- Inventory table will be rendered here -->
-            </div>
+            <div id="inventoryTableWrapper"></div>
         </section>
     </main>
     <footer>
         <div>AYTHMATHEN IMP-EXP &bull; <a href="mailto:contact@aythmathen.com">Contact</a></div>
     </footer>
-    <script src="app.js"></script>
+    <script src="inventory_search.js"></script>
 </body>
 </html>
