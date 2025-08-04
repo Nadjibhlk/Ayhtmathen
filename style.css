@@ -1,13 +1,13 @@
-/* Reset + base */
 body, h1, h2, h3, p, input, button {
     margin: 0;
     padding: 0;
     font-family: 'Inter', Arial, sans-serif;
 }
+
 body {
     background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
-    min-height: 100vh;
     color: #f2f2f2;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -40,14 +40,18 @@ main {
 }
 
 .search-section {
+    margin-bottom: 1.2rem;
+}
+.search-group {
+    position: relative;
     display: flex;
     gap: 0.6rem;
     justify-content: center;
-    margin-bottom: 1.2rem;
-    padding: 1.2rem;
+    align-items: center;
     background: #181a20;
     border-radius: 16px;
     box-shadow: 0 2px 14px 0 rgba(14, 165, 233, 0.05);
+    padding: 1.2rem;
 }
 #searchInput {
     flex: 1;
@@ -60,6 +64,8 @@ main {
     outline: none;
     transition: box-shadow 0.18s;
     box-shadow: 0 1px 8px 0 rgba(14, 165, 233, 0.07);
+    position: relative;
+    z-index: 10;
 }
 #searchInput:focus {
     box-shadow: 0 2px 16px 0 #0ea5e977;
@@ -78,6 +84,7 @@ main {
     display: flex;
     align-items: center;
     gap: 0.5em;
+    z-index: 10;
 }
 #searchBtn:hover {
     background: linear-gradient(120deg, #22c55e 60%, #0ea5e9 100%);
@@ -86,6 +93,36 @@ main {
 .search-icon {
     font-size: 1.21em;
     vertical-align: middle;
+}
+
+/* Suggestions Dropdown */
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #23272e;
+    border: 1px solid #0ea5e9;
+    color: #fff;
+    z-index: 99;
+    border-radius: 0 0 12px 12px;
+    max-height: 205px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px #23272e66;
+    font-size: 1rem;
+}
+.suggestion-item {
+    padding: 9px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #343a40;
+    transition: background 0.15s;
+}
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+.suggestion-item:hover, .suggestion-item.active {
+    background: #0ea5e9;
+    color: #fff;
 }
 
 #resultsSection {
@@ -119,7 +156,6 @@ main {
     color: #eab308;
     margin-bottom: 0.3rem;
 }
-
 .result-info-row {
     display: flex;
     gap: 0.8rem;
@@ -209,6 +245,7 @@ main {
 @media (max-width: 460px) {
     header h1 { font-size: 1.25rem;}
     .search-section { flex-direction: column; }
+    .search-group { flex-direction: column; gap: 0.5em;}
     #searchInput, #searchBtn { width: 100%; }
     .result-title, .result-desc { font-size: 1rem;}
     .result-info-row { flex-direction: column; gap: 0.5rem;}
